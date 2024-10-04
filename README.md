@@ -50,6 +50,7 @@ qc.cx(0, 1)
 qc.draw(output = 'mpl')
 ``` 
 **Example Output:**
+![Quantum Circuit](ImagesMD/qc.png)
 
 
 ### 2. `QiskitPrimitives.ipynb`
