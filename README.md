@@ -15,6 +15,7 @@ This repository contains various quantum programs implemented using IBM's Qiskit
   - [VariationalQuantumEigensolver.ipynb](#variationalquantumeigensolveripynb)
   - [DynamicQuantumErrorAnalysis.ipynb](#dynamicquantumerroranalysisipynb)
   - [DynamicQuantumErrorCorrection.ipynb](#dynamicquantumerrorcorrectionipynb)
+  - [Quantum-Algorithms/QuantumApproximateOptimizationAlgorithm.ipynb](#quantumapproximateoptimizationalgorithm.ipynb)
 - [Getting Started with Qiskit](#getting-started-with-qiskit)
 - [License](#license)
 
@@ -30,6 +31,8 @@ This repository contains notebooks that demonstrate quantum programming using IB
 ---
 
 ## Hello-world Programs
+
+These are some of the programs that will help you get started with learning the basics of IBM's qiskit platform and its features. 
 
 ### 1. `QiskitHelloWorld.ipynb`
 - **2-qubits GHZ state example**
@@ -50,6 +53,7 @@ qc.cx(0, 1)
 qc.draw(output = 'mpl')
 ``` 
 **Example Output:**
+
 ![Quantum Circuit](ImagesMD/qc.png)
 
 
@@ -92,6 +96,8 @@ print(counts)
 ```
 **Output:**
 
+![Sampler](ImagesMD/sampler.png)
+
 **Execution on Estimator**
 ```python
 from qiskit.circuit import Parameter 
@@ -106,6 +112,7 @@ observable = SparsePauliOp("I" * middle_index + "Z" + "I" * (middle_index-1))
 ```
 **Output:**
 
+![Estimator](ImagesMD/Estimator.png)
 
 ### 3. `CustomizedPrimitives.ipynb`
 
@@ -159,6 +166,8 @@ circ_dd.draw(output="mpl", style="iqp", idle_wires=False)
 ```
 **Output:**
 
+![Custom](ImagesMD/custom.png)
+
 ### 4. `QiskitDynamicCircuits.ipynb`
 
 This notebook demonstrates **dynamic circuits** in Qiskit by implementing **long-range CNOT gate teleportation**. This shows how feedback loops and classical control can be incorporated into quantum circuits.
@@ -175,6 +184,9 @@ qc = get_dynamic_CNOT_circuit(num_qubit = 7)
 qc.draw(output='mpl')
 ```
 **Output:**
+
+![DD](ImagesMD/dynamic.png)
+
 ---
 ## Quantum Algorithms
 
@@ -196,6 +208,8 @@ g = [1, 1, -1, -1]
 circ = FourierChecking(f=f, g=g)
 ```
 **Output:**
+
+![QFT](ImagesMD/QFT.png)
 
 ### 2. `GroversAlgorithm.ipynb`
 
@@ -234,6 +248,8 @@ oracle.draw(output = "mpl")
 ```
 **Output:**
 
+![Grover](ImagesMD/Grover.png)
+
 ### 3. `VariationalQuantumEigensolver.ipynb`
 
 - **Variational Quantum Eigensolver (VQE)**: A hybrid quantum-classical algorithm used to find the minimum eigenvalue of a **Hamiltonian**, widely used in quantum chemistry for evaluating the energy states of molecules.
@@ -259,6 +275,8 @@ result = vqe.compute_minimum_eigenvalue(operator=hamiltonian)
 print(result.eigenvalue)
 ```
 **Output:**
+
+![VQE](ImagesMD/VQE.png)
 
 ### 4. `DynamicQuantumErrorAnalysis.ipynb`
 
@@ -314,6 +332,53 @@ Completed bit code experiment syndrome measurement counts (corrected): {'01': 25
 Bit-flip errors were detected/corrected on 71/1000 trials.
 A final parity error was detected on 149/1000 trials.
 ```
+
+### 6. `QuantumApproximateOptimizationAlgorithm.ipynb`
+
+**Optimization** algorithms executed using quantum computers, taking the **maximum-cut problem** from combinatorics as an example. 
+
+**Pseudocode for QAOA:**
+1. Initialize qubits in a superposition state.
+2. Define the cost Hamiltonian.
+3. Define the mixer Hamiltonian.
+4. Apply alternating layers of cost and mixer Hamiltonians.
+5. Measure the qubits.
+6. Classical optimization loop. 
+
+**Example sampling code:**
+
+```python
+# Extracting lowest-cost solution
+_PARITY = np.array([-1 if bin(i).count("1") % 2 else 1 for i in range(256)], dtype=np.complex128)
+
+def evaluate_sparse_pauli(state: int, observable: SparsePauliOp) -> complex: 
+    # Evaluation of the expectation value of a measured state
+    packed_uint8 = np.packbits(observable.paulis.z, axis=1, bitorder="little")
+    state_bytes = np.frombuffer(state.to_bytes(packed_uint8.shape[1], "little"), dtype=np.uint8)
+    reduced = np.bitwise_xor.reduce(packed_uint8 & state_bytes, axis=1)
+    return np.sum(observable.coeffs * _PARITY[reduced])
+
+def best_solution(samples, hamiltonian):
+    min_cost = 1000
+    min_sol = None
+    for bit_str in samples.keys():
+        candidate_sol = int(bit_str)
+        fval = evaluate_sparse_pauli(candidate_sol, hamiltonian).real
+        if fval <= min_cost:
+            min_sol = candidate_sol
+            
+    return min_sol
+
+best_sol_100 = best_solution(final_distribution_100_int, cost_hamiltonian_100)
+best_sol_bitstring_100 = to_bitstring(int(best_sol_100), len(graph_100))
+best_sol_bitstring_100.reverse()
+
+print("Result bitstring:", best_sol_bitstring_100)
+```
+
+**Output:**
+
+![graph](ImagesMD/graph.png)
 
 ## Getting Started
 
