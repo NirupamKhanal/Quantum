@@ -1,6 +1,6 @@
 # Quantum Programs with IBM's Qiskit
 
-This repository contains various quantum programs implemented using IBM's Qiskit framework. The programs are organized into two main sections: **Hello-world** and **Quantum-Algorithms**. Each notebook demonstrates different aspects of quantum computing, ranging from simple quantum circuits to more advanced algorithms and error correction techniques.
+This repository contains various quantum programs implemented using IBM's Qiskit framework. The programs are organized into three main sections: **Hello-world**, **Quantum-Algorithms**, and **Quantum Machine Learning**. Each notebook demonstrates different aspects of quantum computing, ranging from simple quantum circuits to more advanced algorithms and error correction techniques.
 
 ## Table of Contents
 - [Overview](#overview)
@@ -16,6 +16,8 @@ This repository contains various quantum programs implemented using IBM's Qiskit
   - [DynamicQuantumErrorAnalysis.ipynb](#dynamicquantumerroranalysisipynb)
   - [DynamicQuantumErrorCorrection.ipynb](#dynamicquantumerrorcorrectionipynb)
   - [Quantum-Algorithms/QuantumApproximateOptimizationAlgorithm.ipynb](#quantumapproximateoptimizationalgorithm.ipynb)
+- [Quantum Machine Learning](#quantum-machine-learning)
+  - [QiskitPatterns.ipynb](#qiskitpatterns.ipynb)
 - [Getting Started with Qiskit](#getting-started-with-qiskit)
 - [License](#license)
 
@@ -379,6 +381,43 @@ print("Result bitstring:", best_sol_bitstring_100)
 **Output:**
 
 ![graph](ImagesMD/graph.png)
+
+---
+## Quantum Machine Learning
+
+### 1. `QiskitPatterns.ipynb`
+
+This notebook explores **quantum circuit patterns** and how they can be leveraged for machine learning tasks. The examples provided demonstrate how to apply different quantum gate patterns to qubit systems to build foundations for quantum machine learning algorithms like **Quantum Support Vector Machines (QSVM)** and **Quantum Neural Networks (QNN)**.
+
+**Pseudocode to build quantum machine learning circuits:**
+1. Initialize the quantum register and classical register.
+2. Apply variational forms using quantum gates (e.g., RX, RY).
+3. Create entangling layers between qubits.
+4. Measure qubits and analyze the results using classical machine learning models.
+
+**Example code:**
+```python
+# Feature map to compute overlap
+num_features = np.shape(X_train)[1]
+num_qubits = int(num_features/2)
+entangler_map = [[0,2],[3,4],[2,5],[1,4],[2,3],[4,6]]
+fm = QuantumCircuit(num_qubits)
+training_param = Parameter("θ")
+feature_params = ParameterVector("x", num_qubits*2)
+fm.ry(training_param, fm.qubits)
+
+for cz in entangler_map:
+    fm.cz(cz[0], cz[1])
+for i in range(num_qubits):
+    fm.rz(-2 * feature_params[2*i+1], i)
+    fm.rx(-2 * feature_params[2*i], i)
+```
+
+**Output:**
+
+![patterns](ImagesMD/patterns.png)
+
+---
 
 ## Getting Started
 
