@@ -417,6 +417,16 @@ for i in range(num_qubits):
 
 ![patterns](ImagesMD/patterns.png)
 
+### 2. `QuantumNeuralNetworks.ipynb`
+
+Illustrations of `qiskit` libraries and features used in setting up **Quantum Neutral Networks (QNNs)**. 
+
+- **Instantiation of EstimatorQNN and SamplerQNN**
+- **Forward pass with and without batched retrival**
+- **Backward pass with and without input gradients**
+- **EstimatorQNN with multiple observables**
+- **SamplerQNN with custom `interpret`**
+
 ---
 
 ## Getting Started
