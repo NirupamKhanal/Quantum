@@ -1,6 +1,6 @@
 # Quantum Programs with IBM's Qiskit
 
-This repository contains various quantum programs implemented using IBM's Qiskit framework. The programs are organized into three main sections: **Hello-world**, **Quantum-Algorithms**, and **Quantum Machine Learning**. Each notebook demonstrates different aspects of quantum computing, ranging from simple quantum circuits to more advanced algorithms and error correction techniques.
+This repository contains various quantum programs implemented using IBM's Qiskit framework. The programs are organized into three main sections: **Hello-world**, **Quantum-Algorithms**, and **Quantum-ML**. Each notebook demonstrates different aspects of quantum computing, ranging from simple quantum circuits to more advanced algorithms and error correction techniques.
 
 ## Table of Contents
 - [Overview](#overview)
@@ -18,6 +18,9 @@ This repository contains various quantum programs implemented using IBM's Qiskit
   - [Quantum-Algorithms/QuantumApproximateOptimizationAlgorithm.ipynb](#quantumapproximateoptimizationalgorithm.ipynb)
 - [Quantum Machine Learning](#quantum-machine-learning)
   - [QiskitPatterns.ipynb](#qiskitpatterns.ipynb)
+  - [QuantumNeuralNetworks.ipynb](#qiskitneuralnetworks.ipynb)
+  - [NeuralNetworkClassifierRegressor.ipynb](#neuralnetworkclassifierregressor.ipynb)
+  - [QuantumDataTraining.ipynb](#quantumdatatraining.ipynb)
 - [Getting Started with Qiskit](#getting-started-with-qiskit)
 - [License](#license)
 
@@ -427,6 +430,94 @@ Illustrations of `qiskit` libraries and features used in setting up **Quantum Ne
 - **EstimatorQNN with multiple observables**
 - **SamplerQNN with custom `interpret`**
 
+### 3. `NeuralNetworkClassifierRegressor.ipynb`
+
+Comparison of perfomance of classical neural networks against quantum neural networks in tasks for classification and regression.
+
+**Pseudocode for classification and regression using variational quantum circuits (VQC):**
+1. Initialize the neural network, using standard dense layers with **activation function** for classical execution and **parameterized quantum circuits (PQC)** for quantum execution.
+2. Initialize the loss functions for classification and regression models.
+3. Train, evaluate and compare the results produced by each defined type of neural network. 
+
+
+**Example code:**
+```python
+# constructing a feature map
+param_x = Parameter("x")
+feature_map = QuantumCircuit(1, name="fm")
+feature_map.ry(param_x, 0)
+
+# constructing ansatz
+param_y = Parameter("y")
+ansatz = QuantumCircuit(1, name="vf")
+ansatz.ry(param_y, 0)
+
+# constructing a circuit 
+qc = QNNCircuit(feature_map=feature_map, ansatz=ansatz)
+
+# constructing QNN
+regression_estimator_qnn = EstimatorQNN(circuit=qc)
+# constructing the regressor 
+regressor = NeuralNetworkRegressor(neural_network=regression_estimator_qnn, loss="squared_error", optimizer=L_BFGS_B(maxiter=5), callback=callback_graph,)
+```
+
+**Output:**
+
+![nncr](ImagesMD/NNCR.png)
+
+### 4. `QuantumDataTraining.ipynb`
+
+Exploratory **data analysis** and **principle components analysis (PCA)** using the Qiskit paradigm. 
+
+**Pseudocode for training a Variational Quantum Classifier (VQC):**
+
+1. Initialize a neural network using classical dense layers for classical models and parameterized quantum circuits (PQC) for quantum models.
+2. Encode classical data into qubits using a feature map (e.g., ZZFeatureMap).
+3. Decompose the feature map into quantum gates for visualization and analysis.
+4. Create the ansatz (variational form) with trainable parameters (e.g., 16 parameters).
+5. Choose an optimizer (e.g., COBYLA) to minimize the objective function.
+6. Set the optimizer to have a defined number of iterations (e.g., maxiter=100).
+7. Define a quantum instance for training (e.g., Sampler for quantum simulation or a real quantum computer).
+8. Create a callback function to monitor and plot the value of the objective function during training.
+9. Construct the VQC using the feature map and ansatz to form the quantum neural network.
+10. Train the VQC on a quantum simulator or hardware, passing the defined quantum instance.
+11. Evaluate the model performance and accuracy after training.
+12. Tune hyperparameters such as the number of repetitions in the ansatz or change the optimizer to improve model performance.
+13. Repeat the process with different feature maps, ansatzes, or optimizers to optimize the model.
+
+**Example code:**
+```python
+# The objective function converges upon certain number of iterations, without necessarily reaching a better solution.
+
+from qiskit.circuit.library import EfficientSU2
+
+ansatz = EfficientSU2(num_qubits=num_features, reps=3)
+optimizer = COBYLA(maxiter=40)
+
+# Constructing a QNN using VQC with the feature map and ansatz as parameters 
+
+vqc = VQC(sampler=sampler, feature_map=feature_map, ansatz=ansatz, optimizer=optimizer, callback=callback_graph,)
+
+objective_func_vals = [] # instantiation
+
+start = time.time()
+vqc.fit(train_features, train_labels)
+elapsed = time.time() - start
+
+print(f"Training time: {round(elapsed)} seconds.")
+```
+
+**Output:**
+```
+Model                           | Test Score | Train Score
+SVC, 4 features                 |       0.99 |       0.97
+VQC, 4 features, RealAmplitudes |       0.85 |       0.87
+----------------------------------------------------------
+SVC, 2 features                 |       0.97 |       0.90
+VQC, 2 features, RealAmplitudes |       0.58 |       0.63
+VQC, 2 features, EfficientSU2   |       0.71 |       0.67
+```
+
 ---
 
 ## Getting Started
@@ -448,7 +539,24 @@ To run the notebooks in this repository, you will need to have the following sof
   pip install notebook
   ```
 
-2. **Running the programs:** 
+2. **Setting up the environment:**
+
+ A python environment can be created and instantiated so as to not call the IBM Quantum API at each execution. A personal API can be generated at the [IBM Quantum](https://quantum.ibm.com/) website. 
+
+```python
+import qiskit
+print("Qiskit version is: ", qiskit.version.VERSION)
+from qiskit_ibm_runtime import QiskitRuntimeService
+
+service = QiskitRuntimeService(channel="ibm_quantum", # ibm_cloud
+                              token = '') # Enter API 
+
+QiskitRuntimeService.save_account(channel='ibm_quantum',
+                                 token = '',
+                                 overwrite = True) # Enter API
+```
+
+3. **Running the programs:** 
 
    ```bash
    git clone https://github.com/your-username/qiskit-quantum-programs.git
